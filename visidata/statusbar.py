@@ -138,21 +138,20 @@ def drawLeftStatus(vd, scr, vs):
     if not active:
         return
 
-    one = False
-    for (pri, msgparts), n in sorted(vd.statuses.items(), key=lambda k: -k[0][0]):
+    oldx = x
+
+    for i, ((pri, msgparts), n) in enumerate(sorted(vd.statuses.items(), key=lambda k: -k[0][0])):
         try:
-            if x > vs.windowWidth:
-                break
-            if one:  # any messages already:
-                x += clipdraw(scr, y, x, sep, attr, w=vs.windowWidth-x)
-            one = True
+            msgattr = attr
+            x = oldx
+            if i != 0:
+                x += clipdraw(scr, y-i, x-3, sep, attr, w=vs.windowWidth-x)-3
             msg = composeStatus(msgparts, n)
 
             if pri == 3: msgattr = error_attr
             elif pri == 2: msgattr = warn_attr
             elif pri == 1: msgattr = warn_attr
-            else: msgattr = attr
-            x += clipdraw(scr, y, x, msg, msgattr, w=vs.windowWidth-x)
+            x += clipdraw(scr, y-i, x, msg, msgattr, w=vs.windowWidth-x)
         except Exception as e:
             vd.exceptionCaught(e)
 
